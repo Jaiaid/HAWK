@@ -4,10 +4,10 @@ KMERSIZE=31 # RD:61
 
 #modified from NIKS script
 
-dir=/home/laptop/Desktop/HAWK/ecoli_analysis/test_dir		#directory for read files 
-hawkDir=/home/laptop/Desktop/HAWK			#directory where hawk is installed
-jellyfish2Dir=/home/laptop/Desktop/HAWK/supplements/jellyfish-2.2.10/build/bin
-sortDir=/home/atif/old_home/old_home/coreutils/deps/bin		#directory where parallel sort is installed
+dir=		#directory for read files 
+hawkDir=			#directory where hawk is installed
+jellyfish2Dir=${hawkDir}/jellyfish-2.2.10/build/bin
+sortDir=`which sort`		#directory where parallel sort is installed
 
 cd ${dir}
 

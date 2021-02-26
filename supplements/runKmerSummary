@@ -1,4 +1,4 @@
-hawkDir=. # /scratch/atif/hawk
+hawkDir=
 
 filename=sequence.txt	# name of input file in fasta format
 

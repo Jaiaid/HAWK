@@ -4,10 +4,10 @@ KMERSIZE=31 # RD:61
 
 #modified from NIKS script
 
-dir=/home/atif/exp_output/25012020/run_jf2_hawk		#directory for read files 
-hawkDir=/home/atif/exp_25012020/HAWK			#directory where hawk is installed
-jellyfish2Dir=/home/atif/exp_25012020/jellyfish2-Hawk/bin
-sortDir=/home/atif/old_home/old_home/coreutils/deps/bin		#directory where parallel sort is installed
+dir=		#directory for read files 
+hawkDir=			#directory where hawk is installed
+jellyfish2Dir=${hawkDir}/jellyfish-2.2.10/build/bin
+sortDir=`which sort`		#directory where parallel sort is installed
 
 cd ${dir}
 

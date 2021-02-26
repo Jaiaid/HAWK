@@ -1,5 +1,5 @@
-hawkDir=/home/atif/exp_hawk_tool/HAWK
-eigenstratDir=/home/atif/exp_hawk_tool/EIG6.0.1-Hawk
+hawkDir=
+eigenstratDir=${hawkDir}/EIG6.0.1-Hawk
 isDiploid=1
 
 noInd=$(cat sorted_files.txt | wc -l);

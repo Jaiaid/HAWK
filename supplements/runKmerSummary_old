@@ -1,4 +1,4 @@
-hawkDir=/scratch/atif/hawk
+hawkDir=
 isCaseSequence=1	# set to 0 if sequence is associated with control
 
 

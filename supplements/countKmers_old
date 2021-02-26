@@ -3,10 +3,10 @@ KMERSIZE=31 # RD:61
 
 #modified from NIKS script
 
-dir=/scratch/atif/1000_genomes/BEB		#directory for read files 
-hawkDir=/scratch/atif/hawk			#directory where hawk is installed
-jellyfishDir=/home/atif/jellyfish-Hawk/bin		#directory where jellyfish is installed
-sortDir=/home/atif/coreutils/deps/bin		#directory where parallel sort is installed
+dir=		#directory for read files 
+hawkDir=			#directory where hawk is installed
+jellyfishDir=${hawkDir}/jellyfish-Hawk/bin
+sortDir=`which sort`		#directory where parallel sort is installed
 
 cd ${dir}
 
