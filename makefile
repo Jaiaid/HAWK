@@ -11,6 +11,7 @@ COUNTKMER_NEW=true
 
 READ_DIR=.
 HAWK_DIR=$(shell pwd)
+CUR_DIR=$(shell pwd)
 
 ifeq ($(COUNTKMER_NEW),true)
 JF_SCRIPT_NAME_TMP=countKmers_jf$(JF_VERSION)
@@ -38,12 +39,13 @@ KMER_SUMMARY_SCRIPT_NAME=runKmerSummary_old
 endif
 
 
-.PHONY: all clean
-
+INSTALL_RULESET = all EIG6.0.1-Hawk $(JF_BUILD_RULE) 
 
 all: hawk preProcess log_reg_case log_reg_control bonf_fasta\
      kmersearch kmersummary convertToFasta_bf_correction convertToFasta_bh_correction\
 	 kmerStats
+
+.PHONY: all clean $(INSTALL_RULESET) install
 
 hawk: hawk.o ${OBJECT_FILE}
 	g++ $^ ${CPP_FLAG} -o $@
@@ -106,22 +108,28 @@ kmerStats.o: kmerStats.cpp
 	g++ $^ -c -o $@
 
 ${OBJECT_FILE}: ${CPP_FILE}
-	for f in `ls ${CPP_FILE}`;do echo $$f;g++ $$f -c -o $$f.o; done
+	@for f in `ls ${CPP_FILE}`;do \
+		echo $$f;g++ $$f -c -o $$f.o; \
+	done
 
-install: copy EIG6.0.1-Hawk $(JF_BUILD_RULE)
+install: $(INSTALL_RULESET)
 
 # build rule jellyfish-2.2.10
 jellyfish-2.2.10: supplements/jellyfish-2.2.10-HAWK.tar.gz
-	cd supplements && \
-	tar -xzvf jellyfish-2.2.10-HAWK.tar.gz -C ..
+	{ cd supplements && \
+	tar -xzvf jellyfish-2.2.10-HAWK.tar.gz -C .. && cd .. && \
 	pushd jellyfish-2.2.10 && \
 	./configure && $(MAKE) && \
-	popd
+	popd && \
+	echo -e "\e[1;32mjellyfish-2.2.10-HAWK BUILD SUCCESSFUL\e[0m"; } || \
+	{ echo -e "\e[1;31mjellyfish-2.2.10-HAWK BUILD FAILED\e[0m"; cd $(CUR_DIR); rm -rf jellyfish-2.2.10; exit 1; }
 
 jellyfish-Hawk: supplements/jellyfish-Hawk.tar.gz
-	cd supplements && \
-	tar -xzvf jellyfish-Hawk.tar.gz -C ..
-	touch jellyfish-Hawk/.mod_time_update_mock && rm jellyfish-Hawk/.mod_time_update_mock
+	{ cd supplements && \
+	tar -xzvf jellyfish-Hawk.tar.gz -C .. && cd .. && \
+	touch jellyfish-Hawk/.mod_time_update_mock && rm jellyfish-Hawk/.mod_time_update_mock && \
+	echo -e "\e[1;32mjellyfish-Hawk BUILD SUCCESSFUL\e[0m"; } || \
+	{ echo -e "\e[1;31mjellyfish-Hawk BUILD FAILED\e[0m"; cd $(CUR_DIR); rm -rf jellyfish-Hawk; exit 1; }
 
 copy: supplements/$(JF_SCRIPT_NAME) supplements/$(HAWK_SCRIPT_NAME) supplements/runAbyss supplements/runBHCorrection supplements/$(KMER_SUMMARY_SCRIPT_NAME)
 	cp -v supplements/$(JF_SCRIPT_NAME) \
@@ -131,13 +139,15 @@ copy: supplements/$(JF_SCRIPT_NAME) supplements/$(HAWK_SCRIPT_NAME) supplements/
 	supplements/$(KMER_SUMMARY_SCRIPT_NAME) .
 
 EIG6.0.1-Hawk: supplements/EIG6.0.1-Hawk.tar.gz
-	cd supplements && \
-	tar -xzvf EIG6.0.1-Hawk.tar.gz -C ..
+	{ cd supplements && \
+	tar -xzvf EIG6.0.1-Hawk.tar.gz -C .. && cd .. && \
 	pushd EIG6.0.1-Hawk/src && \
 	$(MAKE) clobber && \
-	$(MAKE) install LDLIBS="-llapacke -lm -llapack -lpthread -lgsl" && \
+	$(MAKE) install LDLIBS="-llapacke -llapack -lm -lpthread -lgsl" && \
 	popd && \
-	touch EIG6.0.1-Hawk/.mod_time_update_mock && rm EIG6.0.1-Hawk/.mod_time_update_mock
+	touch EIG6.0.1-Hawk/.mod_time_update_mock && rm EIG6.0.1-Hawk/.mod_time_update_mock && \
+	echo -e "\e[1;32mEIG6.0.1-HAWK BUILD SUCCESSFUL\e[0m"; } || \
+	{ echo -e "\e[1;31mEIG6.0.1-HAWK BUILD FAILED\e[0m"; cd $(CUR_DIR); rm -rf EIG6.0.1-Hawk; exit 1; }
 	
 path_replace: copy
 	sed -i "s|dir=|dir=${READ_DIR}|g" $(JF_SCRIPT_NAME)
@@ -147,10 +157,8 @@ path_replace: copy
 	sed -i "s|hawkDir=|hawkDir=${HAWK_DIR}|g" $(KMER_SUMMARY_SCRIPT_NAME)
 
 clean:
-	rm *.o
-	rm ${CPP_FOLDER}/*.o
-
-clean_eigjf:
+	rm -f *.o
+	rm -f ${CPP_FOLDER}/*.o
 	rm -rf EIG6.0.1-Hawk
 	rm -rf jellyfish-Hawk
 	rm -rf jellyfish-2.2.10
